@@ -1,5 +1,12 @@
 class MoviesController < ApplicationController
 
+  def similar
+    id = params[:id]
+    @movie = Movie.find(id)
+    redirect_to movies_path and return if @movie[:director] == ''
+    @similar = Movie.find_all_by_director(@movie[:director])
+  end
+
   def show
     id = params[:id] # retrieve movie ID from URI route
     @movie = Movie.find(id) # look up movie by unique ID
@@ -7,6 +14,8 @@ class MoviesController < ApplicationController
   end
 
   def index
+    logger.debug "******************************"
+    logger.debug session
     sort = params[:sort] || session[:sort]
     case sort
     when 'title'
